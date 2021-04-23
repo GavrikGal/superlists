@@ -1,6 +1,19 @@
 from selenium import webdriver
+import unittest
 
-browser = webdriver.Firefox()
+
+class NewVisitorTest(unittest.TestCase):
+    ''' Тест нового посетителя '''
+
+    def setUp(self):
+        '''установа'''
+        self.browser = webdriver.Firefox()
+
+    def tearDown(self) -> None:
+        '''демонтаж'''
+        self.browser.quit()
+
+
 
 # Эдит хочет оценить доступность домашней страницы
 browser.get('http://localhost:8000')
