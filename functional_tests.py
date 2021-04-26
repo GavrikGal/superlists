@@ -69,3 +69,4 @@ class NewVisitorTest(unittest.TestCase):
 # Довольная она ложится спать
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
+# Добавил tag
