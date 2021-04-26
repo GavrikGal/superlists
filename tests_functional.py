@@ -13,13 +13,15 @@ class NewVisitorTest(unittest.TestCase):
         '''демонтаж'''
         self.browser.quit()
 
+    def test_can_start_a_list_and_retrieve_it_later(self):
+        '''тест: можно начать список и получить его позже'''
 
+        # Эдит хочет оценить доступность домашней страницы
+        self.browser.get('http://localhost:8000')
 
-# Эдит хочет оценить доступность домашней страницы
-browser.get('http://localhost:8000')
-
-# Она видит, что заголовок и шапка страницы говорят о списках неотложных дел
-assert 'To-Do' in browser.title
+        # Она видит, что заголовок и шапка страницы говорят о списках неотложных дел
+        self.assertIn('To-Do', self.browser.title)
+        self.fail('Закончить тест!')
 
 # Ей сразу же предлагается ввести элемент списка
 
@@ -38,4 +40,5 @@ assert 'To-Do' in browser.title
 # Она посещает этот URL-адрес - ее список по-прежнему там.
 
 # Довольная она ложится спать
-browser.quit()
+if __name__ == '__main__':
+    unittest.main(warnings='ignore')
