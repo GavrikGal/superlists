@@ -17,5 +17,6 @@ from django.conf.urls import url
 from lists import views
 
 urlpatterns = [
+    url('lists/uniq_list_in_the_world/', views.view_list, name='view_list'),
     url('', views.home_page, name='home'),
 ]

@@ -3,6 +3,25 @@ from django.test import TestCase
 from lists.models import Item
 
 
+class ListViewTest(TestCase):
+    """Тест представления списка"""
+
+    def test_uses_list_template(self):
+        """тест: используется шаблон списка"""
+        response = self.client.get('/lists/uniq_list_in_the_world/')
+        self.assertTemplateUsed(response, 'lists/list.html')
+
+    def test_displays_all_items(self):
+        """тест: отображаются все элементы списка"""
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+
+        response = self.client.get('/lists/uniq_list_in_the_world/')
+
+        self.assertContains(response, 'itemey 1')
+        self.assertContains(response, 'itemey 2')
+
+
 class HomePageTest(TestCase):
     """Тест домашней страницы"""
 
@@ -23,22 +42,12 @@ class HomePageTest(TestCase):
         """тест: переадресует после post-запроса"""
         response = self.client.post('/', data={'item_text': 'A new list item'})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/uniq_list_in_the_world/')
 
     def test_only_saves_items_when_necessary(self):
         """тест: сохраняет элементы, только когда нужно"""
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
-
-    def test_displays_all_list_items(self):
-        """тест: отображаются все элементы списка"""
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
-
-        response = self.client.get('/')
-
-        self.assertIn('itemey 1', response.content.decode())
-        self.assertIn('itemey 2', response.content.decode())
 
 
 class ItemModelTest(TestCase):
