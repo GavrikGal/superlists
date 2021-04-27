@@ -67,3 +67,4 @@ class NewVisitorTest(LiveServerTestCase):
 # Она посещает этот URL-адрес - ее список по-прежнему там.
 
 # Довольная она ложится спать
+# tag
