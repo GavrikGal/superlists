@@ -113,3 +113,4 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn('Купить молоко', page_text)
 
         # Удовлетворенные они оба ложатся спать
+        # tag
