@@ -1,7 +1,10 @@
+import os
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 import time
 
 MAX_WAIT = 3
@@ -12,7 +15,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         """установка"""
-        self.browser = webdriver.Firefox()
+        options = Options()
+        # options.add_argument('--headless')
+        # options.add_argument('--disable-gpu')
+        self.browser = webdriver.Firefox(options=options)
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
 
     def tearDown(self) -> None:
         """демонтаж"""
