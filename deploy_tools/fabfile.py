@@ -58,6 +58,10 @@ def _update_database(source_folder):
     """обновить базу данных"""
     run(
         f'cd {source_folder}'
+        ' && ../virtualenv/bin/python manage.py makemigrations'
+    )
+    run(
+        f'cd {source_folder}'
         ' && ../virtualenv/bin/python manage.py migrate --noinput'
     )
 

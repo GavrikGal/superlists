@@ -1,5 +1,5 @@
 [Unit]
-Description = Gunicorn server for
+Description = Gunicorn server for SITENAME
 
 [Service]
 Restart=on-failure
