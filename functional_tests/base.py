@@ -25,6 +25,17 @@ class FunctionalTest(StaticLiveServerTestCase):
         """демонтаж"""
         self.browser.quit()
 
+    def wait_for(self, fn):
+        """ожидать"""
+        start_time = time.time()
+        while True:
+            try:
+                return fn()
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.1)
+
     def wait_for_row_in_list_table(self, row_text):
         """ожидать строки в таблице списка"""
         start_time = time.time()
