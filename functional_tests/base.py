@@ -25,6 +25,10 @@ class FunctionalTest(StaticLiveServerTestCase):
         """демонтаж"""
         self.browser.quit()
 
+    def get_item_input_box(self):
+        """получить поле ввода для элемента"""
+        return self.browser.find_element_by_id('id_text')
+
     def wait_for(self, fn):
         """ожидать"""
         start_time = time.time()
