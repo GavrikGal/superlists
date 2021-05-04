@@ -7,6 +7,11 @@ from lists.models import Item, List
 class ListAndItemModelsTest(TestCase):
     """тест модели списка и элемента списка"""
 
+    def test_get_absolute_url(self):
+        """тест: получен абсолютный url"""
+        list_ = List.objects.create()
+        self.assertEqual(list_.get_absolute_url(), f'/lists/{list_.id}/')
+
     def test_saving_and_retrieving_items(self):
         """тест сохранения и получения элементов списка"""
         list_ = List()
