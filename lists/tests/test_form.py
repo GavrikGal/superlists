@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from lists.form import ItemForm, EMPTY_ITEM_ERROR
+from lists.forms import ItemForm, EMPTY_ITEM_ERROR
 
 
 class ItemFormTest(TestCase):
