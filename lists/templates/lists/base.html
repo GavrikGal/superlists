@@ -19,9 +19,9 @@
 {#                                   class="form-control {% if error %} is-invalid {% endif %}"#}
 {#                                   placeholder="Enter a to-do item" />#}
                             {{ form.text }}
-                            {% if error %}
+                            {% if form.errors %}
                                 <div class="invalid-feedback has-error">
-                                    <span>{{ error }}</span>
+                                    <div class="help-block">{{ form.text.errors }}</div>
                                 </div>
                             {% endif %}
                             {% csrf_token %}

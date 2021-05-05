@@ -2,19 +2,27 @@ from django.test import TestCase
 from django.utils.html import escape
 
 from lists.models import Item, List
-from lists.forms import ItemForm
+from lists.forms import ItemForm, EMPTY_ITEM_ERROR
 
 
 class NewListTest(TestCase):
     """тест нового списка"""
 
-    def test_validation_errors_are_sent_back_to_home_page_template(self):
-        """тест: ошибки валидации отсылаются назад в шаблон домашней страницы"""
+    def test_for_invalid_input_renders_home_template(self):
+        """тест на недопустимый ввод: отображает домашний шаблон"""
         response = self.client.post('/lists/new', data={'text': ''})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'lists/home.html')
-        expected_error = escape("You can't have an empty list item")
-        self.assertContains(response, expected_error)
+
+    def test_validation_errors_are_shown_home_page(self):
+        """тест: ошибки валидации выводятся на домашней странице"""
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertContains(response, escape(EMPTY_ITEM_ERROR))
+
+    def test_for_invalid_input_passes_form_to_template(self):
+        """тест на недопустимый ввод: форма передается в шаблон"""
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertIsInstance(response.context['form'], ItemForm)
 
     def test_invalid_list_items_arent_saved(self):
         """тест: сохраняются недопустимые элементы списка"""
