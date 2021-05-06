@@ -25,7 +25,7 @@ class NewListTest(TestCase):
         self.assertIsInstance(response.context['form'], ItemForm)
 
     def test_invalid_list_items_arent_saved(self):
-        """тест: сохраняются недопустимые элементы списка"""
+        """тест: не сохраняются недопустимые элементы списка"""
         self.client.post('/list/new', data={'text': ''})
         self.assertEqual(List.objects.count(), 0)
         self.assertEqual(Item.objects.count(), 0)
@@ -74,7 +74,7 @@ class ListViewTest(TestCase):
         self.assertTemplateUsed(response, 'lists/list.html')
 
     def test_for_invalid_input_passes_form_to_template(self):
-        """тест на недопустимый ввод:  форма передается в шаблон"""
+        """тест на недопустимый ввод: форма передается в шаблон"""
         response = self.post_invalid_input()
         self.assertIsInstance(response.context['form'], ItemForm)
 
