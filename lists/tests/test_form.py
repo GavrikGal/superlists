@@ -24,7 +24,7 @@ class ExistingListItemFormTest(TestCase):
         self.assertEqual(form.errors['text'], [EMPTY_ITEM_ERROR])
 
     def test_form_validation_for_duplicate_items(self):
-        """тест: валидация формы для повторных элементов """
+        """тест: валидация формы для повторных элементов"""
         list_ = List.objects.create()
         Item.objects.create(list=list_, text='no twins!')
         form = ExistingListItemForm(for_list=list_, data={'text': 'no twins!'})
