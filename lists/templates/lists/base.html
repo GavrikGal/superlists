@@ -21,7 +21,9 @@
                             {{ form.text }}
                             {% if form.errors %}
                                 <div class="invalid-feedback has-error">
-                                    <div class="help-block">{{ form.text.errors }}</div>
+                                    {% for error in form.text.errors %}
+                                        <div class="help-block ">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             {% endif %}
                             {% csrf_token %}
