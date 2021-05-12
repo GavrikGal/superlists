@@ -8,7 +8,7 @@ class PasswordlessAuthenticationBackend(object):
 
     def authenticate(self, request, uid):
         """авторизовать"""
-        print('авторизация пошла... uid', uid, file=sys.stderr)
+        print('uid', uid, file=sys.stderr)
         if not Token.objects.filter(uid=uid).exists():
             print('no token found', file=sys.stderr)
             return None
