@@ -1,7 +1,7 @@
 import os
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException, NoSuchElementException
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.firefox.options import Options
 import time
 
@@ -35,7 +35,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         while True:
             try:
                 return fn()
-            except (AssertionError, WebDriverException, NoSuchElementException) as e:
+            except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.1)
