@@ -18,14 +18,9 @@ def login(request):
     """регистация в системе"""
     print('login view', file=sys.stderr)
     uid = request.GET.get('uid')
-    print(f'login. uid = {uid}', file=sys.stderr)
     user = authenticate(uid=uid)
-    print(f'login. user = {user}', file=sys.stderr)
-
     if user is not None:
         auth_login(request, user)
-        print(f'login. User not found. New user = {user}', file=sys.stderr)
-
     return redirect('/')
 
 

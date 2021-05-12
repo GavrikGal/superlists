@@ -6,9 +6,9 @@ from accounts.models import ListUser, Token
 class PasswordlessAuthenticationBackend(object):
     """серверный поцессор беспарольной аутентификации"""
 
-    def authenticate(self, uid):
+    def authenticate(self, request, uid):
         """авторизовать"""
-        print('ебать-колотить... авторизация пошла... uid', uid, file=sys.stderr)
+        print('авторизация пошла... uid', uid, file=sys.stderr)
         if not Token.objects.filter(uid=uid).exists():
             print('no token found', file=sys.stderr)
             return None
