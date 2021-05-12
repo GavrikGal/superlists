@@ -12,7 +12,7 @@ class ItemValidationTest(FunctionalTest):
 
     def test_error_messages_are_cleared_on_input(self):
         """тест: сообщения об ошьбках очищаются при вводе"""
-        # Эдит начинает список и вызывает ошибуц валидации:
+        # Эдит начинает список и вызывает ошибку валидации:
         self.browser.get(self.live_server_url)
         self.get_item_input_box().send_keys('Banter too thick')
         self.get_item_input_box().send_keys(Keys.ENTER)
@@ -24,12 +24,23 @@ class ItemValidationTest(FunctionalTest):
             self.get_error_element().is_displayed()
         ))
 
+        # При ошибке поле ввода окружила красная рамочка
+        self.wait_for(lambda: self.assertTrue(
+            self.browser.find_element_by_css_selector('.is-invalid')
+        ))
+
         # Она начинает набирать в поле ввода, чтобы очистить ошибку
         self.get_item_input_box().send_keys('a')
 
         # Она довольна от того, что сообщение об ощибке исчезает
         self.wait_for(lambda: self.assertFalse(
             self.get_error_element().is_displayed()
+        ))
+
+        # И поле, в котором была ошибка, больше не окружено красной рамкой
+        self.wait_for(lambda: self.assertEqual(
+            len(self.browser.find_elements_by_css_selector('.is-invalid')),
+            0
         ))
 
     def test_cannot_add_empty_list_items(self):
