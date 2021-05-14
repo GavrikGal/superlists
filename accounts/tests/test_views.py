@@ -1,8 +1,33 @@
 from django.test import TestCase
+from django.contrib import auth
+from django.urls import reverse
 from unittest.mock import patch, call
 
 from accounts.models import Token
-import accounts.views
+from accounts.models import User
+
+
+class LogoutViewTest(TestCase):
+
+    def test_redirect_to_home_page(self):
+        """тест: переадресуется на домашнюю страницу"""
+        response = self.client.get('/accounts/logout')
+        self.assertRedirects(response, '/')
+
+    def test_login_logout(self):
+        """тест: вызов logout делает пользоватеся не авторизированным"""
+        request = self.client.request().wsgi_request
+        token = Token.objects.create(email='test.dmitry.gal@gamil.com')
+        url = request.build_absolute_uri(
+            reverse('login') + '?token=' + str(token.uid)
+        )
+        self.client.get(url)
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        self.assertFalse(user.is_anonymous)
+        self.client.get('/accounts/logout')
+        user = auth.get_user(self.client)
+        self.assertFalse(user.is_authenticated)
 
 
 @patch('accounts.views.auth')

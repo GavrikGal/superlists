@@ -9,6 +9,12 @@ from django.urls import reverse
 from accounts.models import Token
 
 
+def logout(request):
+    """выйти из системы"""
+    auth.logout(request)
+    return redirect('/')
+
+
 def login(request):
     """зарегистрировать вход в систему"""
     user = auth.authenticate(uid=request.GET.get('token'))
