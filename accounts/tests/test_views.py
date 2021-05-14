@@ -8,6 +8,15 @@ import accounts.views
 class SendLoginEmailViewTest(TestCase):
     """тест представления, которое отправляет сообщение для входа в систему"""
 
+    @patch('accounts.views.auth')
+    def test_calls_authenticate_with_uid_from_get_request(self, mock_auth):
+        """тест: вызывается authenticate с uid из GET-запроса"""
+        self.client.get('/accounts/login?token=abcd123')
+        self.assertEqual(
+            mock_auth.autenticate.call_args,
+            call(uid='abcd123')
+        )
+
     def test_creates_token_associated_with_email(self):
         """тест: создается маркер, связанный с электронной почтой"""
         self.client.post('/accounts/send_login_email', data={
