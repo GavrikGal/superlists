@@ -11,12 +11,9 @@ from accounts.models import Token
 
 def login(request):
     """зарегистрировать вход в систему"""
-    print('login view', file=sys.stderr)
-    auth.authenticate('Ба-бах!')
-    # uid = request.GET.get('uid')
-    # user = auth.authenticate(uid=uid)
-    # if user is not None:
-    #     auth.login(request, user)
+    user = auth.authenticate(uid=request.GET.get('token'))
+    if user:
+        auth.login(request, user)
     return redirect('/')
 
 

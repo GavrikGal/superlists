@@ -10,20 +10,29 @@
     </head>
     <body>
         <div class="container">
-            <nav class="navbar navbar-default" role="navigation">
+            <nav class="navbar navbar-light bg-light mb-2" role="navigation">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="/">Superlists</a>
-                    <form class="navbar-form navbar-right" method="post" action="{% url 'send_login_email' %}">
-                        <span>Enter email to log in:</span>
-                        <input class="form-control" name="email" type="text" />
-                        {% csrf_token %}
-                    </form>
+                    {% if user.email %}
+                        <ul class="nav navbar-nav">
+                            <li class="navbar-text">Logged in as {{ user.email }}</li>
+                            <li><a href="#">Log out</a></li>
+                        </ul>
+                    {% else %}
+                        <form class="navbar-form"
+                              method="post"
+                              action="{% url 'send_login_email' %}">
+                            <span>Enter email to log in:</span>
+                            <input class="form-control" name="email" type="text" />
+                            {% csrf_token %}
+                        </form>
+                    {% endif %}
                 </div>
             </nav>
 
             {% if messages %}
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-10 offset-md-1">
                         {% for message in messages %}
                             {% if message.level_tag == 'success' %}
                                 <div class="alert alert-success">{{ message }}</div>
@@ -36,7 +45,7 @@
             {% endif %}
 
             <div class="row">
-                <div class="col-md-6 offset-md-3 jumbotron">
+                <div class="col-md-10 offset-md-1 jumbotron">
                     <div class="text-center">
                         <h1 class="display-4">{% block header_text %}{% endblock %}</h1>
                         <form method="POST" action="{% block form_action %}{% endblock %}" >
