@@ -69,7 +69,6 @@ class SendLoginEmailViewTest(TestCase):
         response = self.client.post('/accounts/send_login_email', data={
             'email': 'test.dmitry.gal@gmial.com'
         })
-
         expected = "Проверте свою почту мы отправили вам ссылку, которую можно использовать для входа на сайт."
         self.assertEqual(
             mock_messages.success.call_args,
