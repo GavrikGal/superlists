@@ -1,10 +1,7 @@
 from django.test import TestCase
-from django.contrib import auth
-from django.urls import reverse
 from unittest.mock import patch, call
 
 from accounts.models import Token
-from accounts.models import User
 
 
 class LogoutViewTest(TestCase):
@@ -14,20 +11,14 @@ class LogoutViewTest(TestCase):
         response = self.client.get('/accounts/logout')
         self.assertRedirects(response, '/')
 
-    def test_login_logout(self):
-        """тест: вызов logout делает пользоватеся не авторизированным"""
-        request = self.client.request().wsgi_request
-        token = Token.objects.create(email='test.dmitry.gal@gamil.com')
-        url = request.build_absolute_uri(
-            reverse('login') + '?token=' + str(token.uid)
+    @patch('accounts.views.auth')
+    def test_call_auth_logout_from_get_request(self, mock_auth):
+        """тест: вызывается auth_logout при вызове /accounts/logout"""
+        response = self.client.get('/accounts/logout')
+        self.assertEqual(
+            mock_auth.logout.call_args,
+            call(response.wsgi_request)
         )
-        self.client.get(url)
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        self.assertFalse(user.is_anonymous)
-        self.client.get('/accounts/logout')
-        user = auth.get_user(self.client)
-        self.assertFalse(user.is_authenticated)
 
 
 @patch('accounts.views.auth')
@@ -55,7 +46,7 @@ class LoginViewTest(TestCase):
         )
 
     def test_does_not_login_if_user_is_not_authenticated(self, mock_auth):
-        """тест: не регисьрируется в системе, если пользователь НЕ аутентифицирован"""
+        """тест: не регистрируется в системе, если пользователь НЕ аутентифицирован"""
         mock_auth.authenticate.return_value = None
         self.client.get('/accounts/login?token=abcd123')
         self.assertFalse(mock_auth.login.called, False)
