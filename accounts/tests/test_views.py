@@ -63,18 +63,6 @@ class SendLoginEmailViewTest(TestCase):
         token = Token.objects.first()
         self.assertEqual(token.email, 'test.dmitry.gal@gmial.com')
 
-    @patch('accounts.views.send_mail')
-    def test_sends_link_to_login_using_token_uid(self, mock_send_mail):
-        """тест: отсылается ссылка на вход в систему, используя uid маркера"""
-        self.client.post('/accounts/send_login_email', data={
-            'email': 'test.dmitry.gal@gmial.com'
-        })
-
-        token = Token.objects.first()
-        expected_url = f'http://testserver/accounts/login?token={token.uid}'
-        (subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
-        self.assertIn(expected_url, body)
-
     @patch('accounts.views.messages')
     def test_adds_success_message_with_mocks(self, mock_messages):
         """тест: добавления сообщения об успехе"""
@@ -99,3 +87,14 @@ class SendLoginEmailViewTest(TestCase):
         self.assertEqual(subject, 'Your login link for Superlists')
         self.assertEqual(from_email, 'noreply@superlists')
         self.assertEqual(to_list, ['test.dmitry.gal@gmail.com'])
+
+    @patch('accounts.views.send_mail')
+    def test_sends_link_to_login_using_token_uid(self, mock_send_mail):
+        """тест: отсылается ссылка на вход в систему, используя uid маркера"""
+        self.client.post('/accounts/send_login_email', data={
+            'email': 'test.dmitry.gal@gmial.com'
+        })
+        token = Token.objects.first()
+        expected_url = f'http://testserver/accounts/login?token={token.uid}'
+        (subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
+        self.assertIn(expected_url, body)
