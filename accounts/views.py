@@ -1,10 +1,7 @@
-import sys
-
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.contrib import messages, auth
 from django.urls import reverse
-
 
 from accounts.models import Token
 
