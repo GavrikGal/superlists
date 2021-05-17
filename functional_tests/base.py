@@ -5,6 +5,8 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.firefox.options import Options
 import time
 
+from .server_tools import reset_database
+
 
 MAX_WAIT = 3
 
@@ -28,12 +30,14 @@ class FunctionalTest(StaticLiveServerTestCase):
     def setUp(self) -> None:
         """установка"""
         options = Options()
+        # Чтобы запустить тесты в браузере без интерфейса - раскомментить след. 2-е строки
         # options.add_argument('--headless')
         # options.add_argument('--disable-gpu')
         self.browser = webdriver.Firefox(options=options)
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            self.live_server_url = 'http://' + staging_server
+        self.staging_server = os.environ.get('STAGING_SERVER')
+        if self.staging_server:
+            self.live_server_url = 'http://' + self.staging_server
+            reset_database(self.staging_server)
 
     def tearDown(self) -> None:
         """демонтаж"""
