@@ -11,6 +11,8 @@ def reset_database(host):
     """обнулить базу данных"""
     manage_dot_py = _get_manage_dot_py(host)
     with settings(host_string=f'ubuntu@{host}'):
+        run('ls')
+        run(f'echo $STAGING_SERVER')
         run(f'{manage_dot_py} flush --noinput')
 
 
