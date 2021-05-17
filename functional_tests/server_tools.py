@@ -3,7 +3,7 @@ from fabric.context_managers import settings
 
 
 def _get_manage_dot_py(host):
-    """получить manage точка py"""
+    """получить manage.py"""
     return f'~/sites/{host}/virtualenv/bin/python ~/sites/{host}/source/manage.py'
 
 
