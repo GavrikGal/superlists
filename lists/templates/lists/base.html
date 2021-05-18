@@ -14,7 +14,10 @@
                 <div class="container-fluid">
                     <a class="navbar-brand" href="/">Superlists</a>
                     {% if user.email %}
-                        <ul class="nav navbar-nav">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li><a href="{% url 'my_lists' user.email %}">My lists</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
                             <li class="navbar-text">Logged in as {{ user.email }}</li>
                             <li><a href="{% url 'logout' %}">Log out</a></li>
                         </ul>
@@ -48,23 +51,31 @@
                 <div class="col-md-10 offset-md-1 jumbotron">
                     <div class="text-center">
                         <h1 class="display-4">{% block header_text %}{% endblock %}</h1>
-                        <form method="POST" action="{% block form_action %}{% endblock %}" >
-                            {{ form.text }}
-                            {% if form.errors %}
-                                <div class="invalid-feedback has-error">
-                                    {% for error in form.text.errors %}
-                                        <div class="help-block ">{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            {% csrf_token %}
-                        </form>
+                        {% block list_form %}
+                            <form method="POST" action="{% block form_action %}{% endblock %}" >
+                                {{ form.text }}
+                                {% if form.errors %}
+                                    <div class="invalid-feedback has-error">
+                                        {% for error in form.text.errors %}
+                                            <div class="help-block ">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% csrf_token %}
+                            </form>
+                        {% endblock %}
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 offset-md-3">
                     {% block table %}
+                    {% endblock %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    {% block extra_content %}
                     {% endblock %}
                 </div>
             </div>

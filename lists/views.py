@@ -4,6 +4,10 @@ from lists.forms import ItemForm, ExistingListItemForm
 from lists.models import List
 
 
+def my_lists(request, email):
+    return render(request, 'lists/my_lists.html')
+
+
 def new_list(request):
     """новый список"""
     form = ItemForm(data=request.POST)
