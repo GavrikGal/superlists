@@ -1,6 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import redirect
 from django.test import TestCase
+from django.urls import reverse
 from django.utils.html import escape
+from unittest.mock import patch
 
 from lists.models import Item, List
 from lists.forms import (
@@ -28,14 +31,27 @@ class MyListsTest(TestCase):
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)
 
-    def test_list_owner_is_saved_if_user_is_authenticated(self):
+    @patch('lists.views.redirect')
+    @patch('lists.views.List')
+    @patch('lists.views.ItemForm')
+    def test_list_owner_is_saved_if_user_is_authenticated(
+            self, mockItemFormClass, mockListClass, mockRedirect,
+    ):
         """тест: владелец сохраняется, если
            пользователь аутентифицирован"""
+        mockRedirect.return_value = redirect('/')
         user = User.objects.create(email='a@b.com')
         self.client.force_login(user)
+        mock_list = mockListClass.return_value
+
+        def check_owner_assigned():
+            """проверить, что владелец назначен"""
+            self.assertEqual(mock_list.owner, user)
+        mock_list.save.side_effect = check_owner_assigned
+
         self.client.post('/lists/new', data={'text': 'new item'})
-        list_ = List.objects.first()
-        self.assertEqual(list_.owner, user)
+
+        mock_list.save.assert_called_once_with()
 
 
 class NewListTest(TestCase):
