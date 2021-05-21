@@ -27,6 +27,11 @@ def new_list(request):
         return render(request, 'lists/home.html', {"form": form})
 
 
+def new_list2(request):
+    """новый список 2"""
+    pass
+
+
 def view_list(request, list_id):
     """представление списка"""
     list_ = List.objects.get(id=list_id)

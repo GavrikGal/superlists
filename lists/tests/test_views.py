@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from django.test import TestCase
-from django.urls import reverse
 from django.utils.html import escape
 from unittest.mock import patch
+import unittest
+
 
 from lists.models import Item, List
 from lists.forms import (
@@ -31,6 +32,7 @@ class MyListsTest(TestCase):
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)
 
+    @unittest.skip
     @patch('lists.views.redirect')
     @patch('lists.views.List')
     @patch('lists.views.ItemForm')
@@ -42,20 +44,22 @@ class MyListsTest(TestCase):
         mockRedirect.return_value = redirect('/')
         user = User.objects.create(email='a@b.com')
         self.client.force_login(user)
-        mock_list = mockListClass.return_value
-
-        def check_owner_assigned():
-            """проверить, что владелец назначен"""
-            self.assertEqual(mock_list.owner, user)
-        mock_list.save.side_effect = check_owner_assigned
+        # mock_list = mockListClass.return_value
+        #
+        # def check_owner_assigned():
+        #     """проверить, что владелец назначен"""
+        #     self.assertEqual(mock_list.owner, user)
+        # mock_list.save.side_effect = check_owner_assigned
 
         self.client.post('/lists/new', data={'text': 'new item'})
 
-        mock_list.save.assert_called_once_with()
+        # mock_list.save.assert_called_once_with()
+        list_ = List.objects.first()
+        self.assertEqual(list_.owner, user)
 
 
-class NewListTest(TestCase):
-    """тест нового списка"""
+class NewListViewIntegratedTest(TestCase):
+    """интергрированный тест нового представления списка"""
 
     def test_for_invalid_input_renders_home_template(self):
         """тест на недопустимый ввод: отображает домашний шаблон"""
