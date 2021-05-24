@@ -57,5 +57,5 @@ class ExistingListItemForm(ItemForm):
             self.fields['text'].widget.attrs['class'] = 'form-control input_lg is-invalid'
             self._update_errors(e)
 
-    def save(self):
-        return forms.models.ModelForm.save(self)
+    # def save(self):
+    #     return forms.models.ModelForm.save(self)
