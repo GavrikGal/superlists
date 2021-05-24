@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 
-from lists.forms import ItemForm, ExistingListItemForm
+from lists.forms import ItemForm, ExistingListItemForm, NewListForm
 from lists.models import List
 
 
@@ -29,7 +29,11 @@ def new_list(request):
 
 def new_list2(request):
     """новый список 2"""
-    pass
+    form = NewListForm(data=request.POST)
+    if form.is_valid():
+        list_ = form.save(owner=request.user)
+        return redirect(list_)
+    return render(request, 'lists/home.html', {'form': form})
 
 
 def view_list(request, list_id):
