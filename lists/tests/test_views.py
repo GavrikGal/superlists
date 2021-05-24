@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
-from django.shortcuts import redirect
 from django.test import TestCase
 from django.utils.html import escape
 from unittest.mock import patch, Mock
@@ -12,7 +11,7 @@ from lists.forms import (
     DUPLICATE_ITEM_ERROR, EMPTY_ITEM_ERROR,
     ExistingListItemForm, ItemForm
 )
-from lists.views import new_list2
+from lists.views import new_list
 
 
 User = get_user_model()
@@ -31,17 +30,16 @@ class NewListViewUnitTest(unittest.TestCase):
 
     def test_passes_POST_data_to_NewListForm(self, mock_redirect, mockNewListForm):
         """тест: передаются POST-данные в новую форму списка"""
-        new_list2(self.request)
+        new_list(self.request)
         mockNewListForm.assert_called_once_with(data=self.request.POST)
 
     def test_saves_form_with_owner_if_form_valid(self, mock_redirect, mockNewListForm):
         """тест: сохраняет форму с владельцем, если форма допустима"""
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = True
-        new_list2(self.request)
+        new_list(self.request)
         mock_form.save.assert_called_once_with(owner=self.request.user)
 
-    # @patch('lists.views.redirect')
     def test_redirects_to_form_returned_object_if_form_valid(
             self, mock_redirect, mockNewListForm
     ):
@@ -50,7 +48,7 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = True
 
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, mock_redirect.return_value)
         mock_redirect.assert_called_once_with(mock_form.save.return_value)
@@ -62,7 +60,7 @@ class NewListViewUnitTest(unittest.TestCase):
         """тест: отображает домашний шаблон с формой, если форма недопустима"""
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = False
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, mock_render.return_value)
 
@@ -74,8 +72,57 @@ class NewListViewUnitTest(unittest.TestCase):
         """тест: не сохраняет, если форма недопустима"""
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = False
-        new_list2(self.request)
+        new_list(self.request)
         self.assertFalse(mock_form.save.called)
+
+
+class NewListViewIntegratedTest(TestCase):
+    """интергрированный тест нового представления списка"""
+    #
+    # def test_for_invalid_input_renders_home_template(self):
+    #     """тест на недопустимый ввод: отображает домашний шаблон"""
+    #     response = self.client.post('/lists/new', data={'text': ''})
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'lists/home.html')
+
+    def test_for_invalid_input_doesnt_save_but_shows_errors(self):  # оставить
+        """тест: ошибки валидации выводятся на домашней странице"""
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertEqual(List.objects.count(), 0)
+        self.assertContains(response, escape(EMPTY_ITEM_ERROR))
+
+    # def test_for_invalid_input_passes_form_to_template(self):
+    #     """тест на недопустимый ввод: форма передается в шаблон"""
+    #     response = self.client.post('/lists/new', data={'text': ''})
+    #     self.assertIsInstance(response.context['form'], ItemForm)
+    #
+    # def test_invalid_list_items_arent_saved(self):
+    #     """тест: не сохраняются недопустимые элементы списка"""
+    #     self.client.post('/list/new', data={'text': ''})
+    #     self.assertEqual(List.objects.count(), 0)
+    #     self.assertEqual(Item.objects.count(), 0)
+
+    def test_can_save_a_POST_request(self):  # оставить
+        """тест: можно сохранить post-запрос"""
+        self.client.post('/lists/new', data={'text': 'A new list item'})
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'A new list item')
+
+    # def test_redirects_after_POST(self):
+    #     """тест: переадресует после post-запроса"""
+    #     response = self.client.post('/lists/new', data={'text': 'A new list item'})
+    #     new_list = List.objects.first()
+    #     self.assertRedirects(response, f'/lists/{new_list.id}/')
+
+    def test_list_owner_is_saved_if_user_is_authenticated(self):  # оставить
+        """тест: владелец сохраняется, если
+           пользователь аутентифицирован"""
+        user = User.objects.create(email='a@b.com')
+        self.client.force_login(user)
+        self.client.post('/lists/new', data={'text': 'new item'})
+        list_ = List.objects.first()
+        self.assertEqual(list_.owner, user)
 
 
 class MyListsTest(TestCase):
@@ -93,70 +140,6 @@ class MyListsTest(TestCase):
         correct_user = User.objects.create(email='a@b.com')
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)
-
-
-class NewListViewIntegratedTest(TestCase):
-    """интергрированный тест нового представления списка"""
-
-    def test_for_invalid_input_renders_home_template(self):
-        """тест на недопустимый ввод: отображает домашний шаблон"""
-        response = self.client.post('/lists/new', data={'text': ''})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'lists/home.html')
-
-    def test_validation_errors_are_shown_home_page(self):
-        """тест: ошибки валидации выводятся на домашней странице"""
-        response = self.client.post('/lists/new', data={'text': ''})
-        self.assertContains(response, escape(EMPTY_ITEM_ERROR))
-
-    def test_for_invalid_input_passes_form_to_template(self):
-        """тест на недопустимый ввод: форма передается в шаблон"""
-        response = self.client.post('/lists/new', data={'text': ''})
-        self.assertIsInstance(response.context['form'], ItemForm)
-
-    def test_invalid_list_items_arent_saved(self):
-        """тест: не сохраняются недопустимые элементы списка"""
-        self.client.post('/list/new', data={'text': ''})
-        self.assertEqual(List.objects.count(), 0)
-        self.assertEqual(Item.objects.count(), 0)
-
-    def test_can_save_a_POST_request(self):
-        """тест: можно сохранить post-запрос"""
-        self.client.post('/lists/new', data={'text': 'A new list item'})
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, 'A new list item')
-
-    def test_redirects_after_POST(self):
-        """тест: переадресует после post-запроса"""
-        response = self.client.post('/lists/new', data={'text': 'A new list item'})
-        new_list = List.objects.first()
-        self.assertRedirects(response, f'/lists/{new_list.id}/')
-
-    # @unittest.skip
-    # @patch('lists.views.redirect')
-    # @patch('lists.views.List')
-    # @patch('lists.views.ItemForm')
-    def test_list_owner_is_saved_if_user_is_authenticated(self
-            # self, mockItemFormClass, mockListClass, mock_redirect,
-    ):
-        """тест: владелец сохраняется, если
-           пользователь аутентифицирован"""
-        # mock_redirect.return_value = redirect('/')
-        user = User.objects.create(email='a@b.com')
-        self.client.force_login(user)
-        # mock_list = mockListClass.return_value
-        #
-        # def check_owner_assigned():
-        #     """проверить, что владелец назначен"""
-        #     self.assertEqual(mock_list.owner, user)
-        # mock_list.save.side_effect = check_owner_assigned
-
-        self.client.post('/lists/new', data={'text': 'new item'})
-
-        # mock_list.save.assert_called_once_with()
-        list_ = List.objects.first()
-        self.assertEqual(list_.owner, user)
 
 
 class ListViewTest(TestCase):

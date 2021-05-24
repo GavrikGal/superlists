@@ -9,11 +9,6 @@ DUPLICATE_ITEM_ERROR = "You've already got this in your list"
 
 class ItemForm(forms.models.ModelForm):
     """форма для элемента списка"""
-    #
-    # def save(self, for_list):
-    #     # return forms.models.ModelForm.save(self)
-    #     self.instance.list = for_list
-    #     return super().save()
 
     class Meta:
         model = Item
@@ -56,6 +51,3 @@ class ExistingListItemForm(ItemForm):
             # залезаем в виджет и обновляем классы вставив is-invalid
             self.fields['text'].widget.attrs['class'] = 'form-control input_lg is-invalid'
             self._update_errors(e)
-
-    # def save(self):
-    #     return forms.models.ModelForm.save(self)

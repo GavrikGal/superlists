@@ -34,7 +34,6 @@ class ItemModelTest(TestCase):
         Item.objects.create(list=list_, text='bla')
         with self.assertRaises(IntegrityError):
             item = Item(list=list_, text='bla')
-            # item.full_clean()
             item.save()
 
     def test_CAN_save_same_item_to_different_lists(self):
