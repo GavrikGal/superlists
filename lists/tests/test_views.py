@@ -46,7 +46,7 @@ class NewListViewUnitTest(unittest.TestCase):
             self, mock_redirect, mockNewListForm
     ):
         """тест: переадресует в возвращаемый формой объект,
-           если форма доустима"""
+           если форма допустима"""
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = True
 
@@ -94,31 +94,6 @@ class MyListsTest(TestCase):
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)
 
-    @unittest.skip
-    @patch('lists.views.redirect')
-    @patch('lists.views.List')
-    @patch('lists.views.ItemForm')
-    def test_list_owner_is_saved_if_user_is_authenticated(
-            self, mockItemFormClass, mockListClass, mock_redirect,
-    ):
-        """тест: владелец сохраняется, если
-           пользователь аутентифицирован"""
-        mock_redirect.return_value = redirect('/')
-        user = User.objects.create(email='a@b.com')
-        self.client.force_login(user)
-        # mock_list = mockListClass.return_value
-        #
-        # def check_owner_assigned():
-        #     """проверить, что владелец назначен"""
-        #     self.assertEqual(mock_list.owner, user)
-        # mock_list.save.side_effect = check_owner_assigned
-
-        self.client.post('/lists/new', data={'text': 'new item'})
-
-        # mock_list.save.assert_called_once_with()
-        list_ = List.objects.first()
-        self.assertEqual(list_.owner, user)
-
 
 class NewListViewIntegratedTest(TestCase):
     """интергрированный тест нового представления списка"""
@@ -157,6 +132,31 @@ class NewListViewIntegratedTest(TestCase):
         response = self.client.post('/lists/new', data={'text': 'A new list item'})
         new_list = List.objects.first()
         self.assertRedirects(response, f'/lists/{new_list.id}/')
+
+    # @unittest.skip
+    # @patch('lists.views.redirect')
+    # @patch('lists.views.List')
+    # @patch('lists.views.ItemForm')
+    def test_list_owner_is_saved_if_user_is_authenticated(self
+            # self, mockItemFormClass, mockListClass, mock_redirect,
+    ):
+        """тест: владелец сохраняется, если
+           пользователь аутентифицирован"""
+        # mock_redirect.return_value = redirect('/')
+        user = User.objects.create(email='a@b.com')
+        self.client.force_login(user)
+        # mock_list = mockListClass.return_value
+        #
+        # def check_owner_assigned():
+        #     """проверить, что владелец назначен"""
+        #     self.assertEqual(mock_list.owner, user)
+        # mock_list.save.side_effect = check_owner_assigned
+
+        self.client.post('/lists/new', data={'text': 'new item'})
+
+        # mock_list.save.assert_called_once_with()
+        list_ = List.objects.first()
+        self.assertEqual(list_.owner, user)
 
 
 class ListViewTest(TestCase):

@@ -9,11 +9,11 @@ DUPLICATE_ITEM_ERROR = "You've already got this in your list"
 
 class ItemForm(forms.models.ModelForm):
     """форма для элемента списка"""
-
-    def save(self, for_list):
-        # return forms.models.ModelForm.save(self)
-        self.instance.list = for_list
-        return super().save()
+    #
+    # def save(self, for_list):
+    #     # return forms.models.ModelForm.save(self)
+    #     self.instance.list = for_list
+    #     return super().save()
 
     class Meta:
         model = Item
@@ -34,10 +34,10 @@ class NewListForm(ItemForm):
 
     def save(self, owner):
         if owner.is_authenticated:
-            List.create_new(first_item_text=self.cleaned_data['text'],
-                            owner=owner)
+            return List.create_new(first_item_text=self.cleaned_data['text'],
+                                   owner=owner)
         else:
-            List.create_new(first_item_text=self.cleaned_data['text'])
+            return List.create_new(first_item_text=self.cleaned_data['text'])
 
 
 class ExistingListItemForm(ItemForm):

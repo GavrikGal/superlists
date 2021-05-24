@@ -41,6 +41,15 @@ class NewListFormTest(unittest.TestCase):
             first_item_text='new item text', owner=user
         )
 
+    @patch('lists.forms.List.create_new')
+    def test_save_returns_new_list_object(self, mock_List_create_new):
+        """тест: save возвращает новый объект списка"""
+        user = Mock(is_authenticated=True)
+        form = NewListForm(data={'text': 'new item text'})
+        form.is_valid()
+        response = form.save(owner=user)
+        self.assertEqual(response, mock_List_create_new.return_value)
+
 
 class ExistingListItemFormTest(TestCase):
     """тест формы элемента существующего списка"""
@@ -76,15 +85,6 @@ class ExistingListItemFormTest(TestCase):
 
 class ItemFormTest(TestCase):
     """тест формы для элемента списка"""
-
-    def test_form_save_handles_saving_to_a_list(self):
-        """тест: метод save формы обрабатывает сохранение в список"""
-        list_ = List.objects.create()
-        form = ItemForm(data={'text': 'do me'})
-        new_item = form.save(for_list=list_)
-        self.assertEqual(new_item, Item.objects.first())
-        self.assertEqual(new_item.text, 'do me')
-        self.assertEqual(new_item.list, list_)
 
     def test_form_input_has_placeholder_and_css_classes(self):
         """тест: поле ввода имеет атрибут placeholder и css-классы"""
