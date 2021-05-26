@@ -70,4 +70,4 @@ class MyListsTest(FunctionalTest):
             []
         ))
 
-        # self.fail('Это хорошо')
+        self.fail('oK OKo okook')
