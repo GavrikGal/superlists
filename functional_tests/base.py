@@ -105,7 +105,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             session_key = create_session_on_server(self.staging_server, email)
         else:
             session_key = create_pre_authenticated_session(email)
-        ## установить coolie, которые нужны для первого посещения домена.
+        ## установить cookie, которые нужны для первого посещения домена.
         ## страницы 404 загружаются быстрее всего!
         self.browser.get(self.live_server_url + "/404_no_such_url/")
         self.browser.add_cookie(dict(
