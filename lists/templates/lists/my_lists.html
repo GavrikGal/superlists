@@ -6,9 +6,12 @@
 
 {% block extra_content %}
     <h2>{{ owner.email }}'s lists</h2>
-    <ul>
+    <div class="list-group list-group-flush">
         {% for list in owner.list_set.all %}
-            <li><a href="{{ list.get_absolute_url }}">{{ list.name }}</a></li>
+            <a href="{{ list.get_absolute_url }}"
+               class="list-group-item list-group-item-action">
+                {{ list.name }}
+            </a>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
