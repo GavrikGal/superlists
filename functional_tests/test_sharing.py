@@ -1,3 +1,5 @@
+from unittest import skip
+
 from selenium import webdriver
 
 from .base import FunctionalTest
@@ -10,6 +12,7 @@ def quit_if_possible(browser):
     except: pass
 
 
+@skip
 class SharingTest(FunctionalTest):
     """тест обмена данными"""
 
