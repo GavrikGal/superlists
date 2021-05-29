@@ -69,6 +69,14 @@ class ItemModelTest(TestCase):
 class ListModelTest(TestCase):
     """тест модели списка"""
 
+    def test_shared_with_can_get_email_and_return_users(self):
+        """тест: shared_with.add принимает email, а shared_with.all содержит
+           соответствующего пользователя"""
+        user = User.objects.create(email='a@b.com')
+        list_ = List.objects.create()
+        list_.shared_with.add(user.email)
+        self.assertIn(user, list_.shared_with.all())
+
     def test_get_absolute_url(self):
         """тест: получен абсолютный url"""
         list_ = List.objects.create()

@@ -17,6 +17,35 @@ from lists.views import new_list
 User = get_user_model()
 
 
+class ShareListUnitTest(unittest.TestCase):
+    """модульный тест для возможности делиться списком"""
+    pass
+
+
+class ShareListIntegratedTest(TestCase):
+    """интегрированный тест для возможности делиться списком"""
+
+    def test_post_redirects_lo_lists_page(self):
+        """тест переадресации в представление списка"""
+        other_list = List.objects.create()
+        correct_list = List.objects.create()
+        user = User.objects.create(email='a@b.com')
+        response = self.client.post(f'/lists/{correct_list.id}/share/', data={'sharee': user.email})
+        self.assertRedirects(response, f'/lists/{correct_list.id}/')
+
+    def test_post_with_new_email_passed(self):
+        """тест: post-запрос с email, которого нет в БД не поднимает исключение"""
+        self.fail('сделать')
+
+    def test_post_with_email_add_user_to_shared_with(self):
+        """тест: post-запрос с email добавляет пользователя с указаным email в
+           атрибут списка shared_with"""
+        user = User.objects.create(email='a@b.com')
+        list_ = List.objects.create()
+        self.client.post(f'/lists/{list_.id}/share/', data={'sharee': user.email})
+        self.assertIn(user, list_.shared_with.all())
+
+
 @patch('lists.views.NewListForm')
 @patch('lists.views.redirect')
 class NewListViewUnitTest(unittest.TestCase):

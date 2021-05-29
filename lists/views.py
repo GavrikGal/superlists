@@ -8,6 +8,14 @@ from lists.models import List
 User = get_user_model()
 
 
+def share_list(request, list_id):
+    """поделиться списком"""
+    list_ = List.objects.get(id=list_id)
+    email = request.POST['sharee']
+    list_.shared_with.add(email)
+    return redirect(list_)
+
+
 def my_lists(request, email):
     """мои списки"""
     owner = User.objects.get(email=email)

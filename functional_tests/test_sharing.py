@@ -1,5 +1,3 @@
-from unittest import skip
-
 from selenium import webdriver
 
 from .base import FunctionalTest
@@ -12,7 +10,6 @@ def quit_if_possible(browser):
     except: pass
 
 
-@skip
 class SharingTest(FunctionalTest):
     """тест обмена данными"""
 
@@ -31,8 +28,6 @@ class SharingTest(FunctionalTest):
 
         # Эдит открывает домашнюю страницу и начинает новый список
         self.browser = edith_browser
-        # self.browser.get(self.live_server_url)
-        # list_page = ListPage(self).add_list_item('Get help')
         list_page = ListPage(self).go_to_list_page()
         list_page.add_list_item('Get help')
 
