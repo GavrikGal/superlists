@@ -7,18 +7,18 @@
 {% block share_box %}
     <div class="row">
         <div class="col-md-6">
-            {% if not list.shared_with.blank %}
-
-                <ul>
-{#                    {% for user in list.shared_with.all %}#}
-{#                        <li></li>#}
-{#                    {% endfor %}#}
+            {% if list.shared_with.all %}
+                <h3>Список предоставлен в общее пользование для:</h3>
+                <ul class="list-sharee">
+                    {% for user in list.shared_with.all %}
+                        <li>{{ user.email }}</li>
+                    {% endfor %}
                 </ul>
             {% endif %}
         </div>
         <div class="col-md-6">
             <form method="post" action="/lists/{{ list.id }}/share/">
-                <h2>Поделиться своим списком</h2>
+                <h3>Поделиться своим списком</h3>
                 <input class="form-control" name="sharee" type="text" placeholder="your-friend@example.com"/>
                 {% csrf_token %}
             </form>

@@ -31,7 +31,6 @@ class SharingTest(FunctionalTest):
         list_page = ListPage(self).go_to_list_page()
         list_page.add_list_item('Get help')
 
-
         # Она замечает опцию "Поделиться этим списком"
         share_box = list_page.get_share_box()
         self.assertEqual(

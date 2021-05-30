@@ -12,6 +12,10 @@ def share_list(request, list_id):
     """поделиться списком"""
     list_ = List.objects.get(id=list_id)
     email = request.POST['sharee']
+    if not email:
+        return redirect(list_)
+    if not User.objects.filter(email=email).exists():
+        User.objects.create(email=email)
     list_.shared_with.add(email)
     return redirect(list_)
 
