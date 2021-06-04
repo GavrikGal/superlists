@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
-from django.views.generic import FormView
+from django.views.generic import FormView, CreateView
 
 from lists.forms import ItemForm, ExistingListItemForm, NewListForm
 from lists.models import List
@@ -49,11 +49,19 @@ def view_list(request, list_id):
     return render(request, 'lists/list.html', {'list': list_, "form": form})
 
 
-def home_page(request):
-    """Домашняя страница"""
-    return render(request, 'lists/home.html', {'form': ItemForm()})
+# def home_page(request):
+#     """Домашняя страница"""
+#     return render(request, 'lists/home.html', {'form': ItemForm()})
 
 
 class HomePageView(FormView):
     template_name = 'lists/home.html'
     form_class = ItemForm
+
+
+class NewListView(CreateView, HomePageView):
+    form_class = NewListForm
+
+    def form_valid(self, form):
+        list_ = form.save(owner=self.request.user)
+        return redirect(list_)
