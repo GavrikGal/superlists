@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
-from django.views.generic import FormView, CreateView
+from django.views.generic import FormView, CreateView, DetailView
 
 from lists.forms import ItemForm, ExistingListItemForm, NewListForm
 from lists.models import List
@@ -34,19 +34,19 @@ def new_list(request):
         list_ = form.save(owner=request.user)
         return redirect(list_)
     return render(request, 'lists/home.html', {'form': form})
-
-
-def view_list(request, list_id):
-    """представление списка"""
-    list_ = List.objects.get(id=list_id)
-    form = ExistingListItemForm(for_list=list_)
-
-    if request.method == 'POST':
-        form = ExistingListItemForm(for_list=list_, data=request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(list_)
-    return render(request, 'lists/list.html', {'list': list_, "form": form})
+#
+#
+# def view_list(request, list_id):
+#     """представление списка"""
+#     list_ = List.objects.get(id=list_id)
+#     form = ExistingListItemForm(for_list=list_)
+#
+#     if request.method == 'POST':
+#         form = ExistingListItemForm(for_list=list_, data=request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect(list_)
+#     return render(request, 'lists/list.html', {'list': list_, "form": form})
 
 
 # def home_page(request):
@@ -65,3 +65,13 @@ class NewListView(CreateView, HomePageView):
     def form_valid(self, form):
         list_ = form.save(owner=self.request.user)
         return redirect(list_)
+
+
+class ViewAndAddToList(DetailView, CreateView):
+    model = List
+    template_name = 'lists/list.html'
+    form_class = ExistingListItemForm
+
+    def get_form(self):
+        self.object = self.get_object()
+        return self.form_class(for_list=self.object, data=self.request.POST)

@@ -116,12 +116,12 @@ class NewListViewUnitTest(unittest.TestCase):
 
 class NewListViewIntegratedTest(TestCase):
     """интергрированный тест нового представления списка"""
-    #
-    # def test_for_invalid_input_renders_home_template(self):
-    #     """тест на недопустимый ввод: отображает домашний шаблон"""
-    #     response = self.client.post('/lists/new', data={'text': ''})
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'lists/home.html')
+
+    def test_for_invalid_input_renders_home_template(self):
+        """тест на недопустимый ввод: отображает домашний шаблон"""
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'lists/home.html')
 
     def test_for_invalid_input_doesnt_save_but_shows_errors(self):  # оставить
         """тест: ошибки валидации выводятся на домашней странице"""
@@ -129,16 +129,16 @@ class NewListViewIntegratedTest(TestCase):
         self.assertEqual(List.objects.count(), 0)
         self.assertContains(response, escape(EMPTY_ITEM_ERROR))
 
-    # def test_for_invalid_input_passes_form_to_template(self):
-    #     """тест на недопустимый ввод: форма передается в шаблон"""
-    #     response = self.client.post('/lists/new', data={'text': ''})
-    #     self.assertIsInstance(response.context['form'], ItemForm)
-    #
-    # def test_invalid_list_items_arent_saved(self):
-    #     """тест: не сохраняются недопустимые элементы списка"""
-    #     self.client.post('/list/new', data={'text': ''})
-    #     self.assertEqual(List.objects.count(), 0)
-    #     self.assertEqual(Item.objects.count(), 0)
+    def test_for_invalid_input_passes_form_to_template(self):
+        """тест на недопустимый ввод: форма передается в шаблон"""
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertIsInstance(response.context['form'], ItemForm)
+
+    def test_invalid_list_items_arent_saved(self):
+        """тест: не сохраняются недопустимые элементы списка"""
+        self.client.post('/list/new', data={'text': ''})
+        self.assertEqual(List.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)
 
     def test_can_save_a_POST_request(self):  # оставить
         """тест: можно сохранить post-запрос"""
@@ -147,11 +147,11 @@ class NewListViewIntegratedTest(TestCase):
         new_item = Item.objects.first()
         self.assertEqual(new_item.text, 'A new list item')
 
-    # def test_redirects_after_POST(self):
-    #     """тест: переадресует после post-запроса"""
-    #     response = self.client.post('/lists/new', data={'text': 'A new list item'})
-    #     new_list = List.objects.first()
-    #     self.assertRedirects(response, f'/lists/{new_list.id}/')
+    def test_redirects_after_POST(self):
+        """тест: переадресует после post-запроса"""
+        response = self.client.post('/lists/new', data={'text': 'A new list item'})
+        new_list = List.objects.first()
+        self.assertRedirects(response, f'/lists/{new_list.id}/')
 
     def test_list_owner_is_saved_if_user_is_authenticated(self):  # оставить
         """тест: владелец сохраняется, если
