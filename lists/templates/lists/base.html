@@ -52,7 +52,7 @@
                     <div class="text-center">
                         <h1 class="display-4">{% block header_text %}{% endblock %}</h1>
                         {% block list_form %}
-                            <form method="POST" action="{% block form_action %}{% endblock %}" >
+                            <form id="id_item_form" method="POST" action="{% block form_action %}{% endblock %}" >
                                 {{ form.text }}
                                 {% if form.errors %}
                                     <div class="invalid-feedback has-error">
@@ -89,10 +89,13 @@
         </div>
         <script src="/static/jQuery/jquery-3.6.0.min.js"></script>
         <script src="/static/list.js"></script>
+
+        {% block scripts %}
         <script>
             $(document).ready(function() {
                 window.Superlists.initialize();
             });
         </script>
+        {% endblock %}
     </body>
 </html>
