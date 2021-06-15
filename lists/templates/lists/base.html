@@ -54,13 +54,15 @@
                         {% block list_form %}
                             <form id="id_item_form" method="POST" action="{% block form_action %}{% endblock %}" >
                                 {{ form.text }}
-                                {% if form.errors %}
                                     <div class="invalid-feedback has-error">
-                                        {% for error in form.text.errors %}
-                                            <div class="help-block ">{{ error }}</div>
-                                        {% endfor %}
+                                        <div class="help-block ">
+                                            {% if form.errors %}
+                                                {% for error in form.text.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                {% endif %}
                                 {% csrf_token %}
                             </form>
                         {% endblock %}

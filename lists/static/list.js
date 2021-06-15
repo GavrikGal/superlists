@@ -14,7 +14,7 @@ window.Superlists.initialize = function (url) {
         $('.has-error').hide();
         $('.is-invalid').removeClass('is-invalid');
     });
-    $.get(url);
+    // $.get(url);
     if (url) {
         window.Superlists.updateItems(url);
 
@@ -25,7 +25,17 @@ window.Superlists.initialize = function (url) {
                 'text': form.find('input[name="text"]').val(),
                 'csrfmiddlewaretoken': form.find('input[name="csrfmiddlewaretoken"]').val(),
             }).done(function () {
+                $('.has-error').hide()
+                $('.is-invalid').removeClass('is-invalid');
                 window.Superlists.updateItems(url);
+            }).fail(function (xhr) {
+                $('.has-error').show();
+                $('#id_item_form .form-control').addClass('is-invalid')
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    $('.has-error .help-block').text(xhr.responseJSON.error);
+                } else {
+                    $('.has-error .help-block').text('Error talking to server. Please try again.');
+                }
             });
         });
     }
